@@ -1,0 +1,88 @@
+<!doctype HTML>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    </head>
+
+    <style>
+        #search {
+				position: absolute;
+				width: 100%;
+				height: 34px;
+				text-align: center;
+			}
+				#search * {
+					font-size: 18px;
+					text-transform: uppercase;
+				}
+        #info {
+            position: absolute;
+            bottom: 10px;
+            left: 340px;
+            right: 0px;
+            padding-top: 6px;
+            text-align: center;
+        }
+        #asset_name {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+        }
+        #asset_author {
+            color: #888;
+        }
+    </style>
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.0.1/dist/aframe-extras.min.js"></script>
+    <script>
+
+        AFRAME.registerComponent('registerevents', {
+            init: function () {
+                var marker = this.el;
+                var Model = document.querySelector("#Model");
+
+                //loadOneObj();
+
+                marker.addEventListener('markerFound', function() {
+                    var markerId = marker.id;
+                    console.log('markerFound', markerId);
+                    var objModelValue = `obj: url(${localStorage.getItem("obj")}); mtl: url(${localStorage.getItem("mtl")})`;
+                    document.getElementById("Model").setAttribute("obj-model",objModelValue);
+                    document.getElementById("asset_name").textContent = localStorage.getItem("displayName");
+                    document.getElementById("asset_author").textContent = localStorage.getItem("authorName");
+                });
+
+                marker.addEventListener('markerLost', function() {
+                    var markerId = marker.id;
+                    console.log('markerLost', markerId);
+                });
+            }
+        });
+
+        
+    </script>
+
+    <body style='margin : 0px; overflow: hidden;'>
+        
+        <!-- we add detectionMode and matrixCodeType to tell AR.js to recognize barcode markers -->
+        <div id="info">
+            <span id="asset_name">Title</span><br/>
+            by <span id="asset_author">Author</span>
+        </div>
+
+        <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
+
+            <a-marker type="pattern" preset="custom" url="pattern03.patt" registerevents id="marker">
+                <a-entity
+                position="0 0 0"
+                scale="1 1 1"
+                rotation="0 0 0"
+                id="Model"></a-entity>
+            </a-marker>
+
+            <a-entity camera></a-entity>
+        </a-scene>
+    </body>
+</html>
